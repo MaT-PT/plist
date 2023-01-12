@@ -29,8 +29,7 @@ BOOL GetProcessList() {
         return 1;
     }
 
-    printf("PID\tName\n");
-    printf("---\t----\n");
+    printf("                          Name    PID    PRI    THD    HND\n");
 
     do {
         printf("%31s %6d %6d %6d %6d %d\n", pe32.szExeFile,pe32.th32ProcessID,pe32.pcPriClassBase,pe32.cntThreads);
