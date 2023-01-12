@@ -12,7 +12,9 @@ char *removeExtension(char *filename) {
 
 int main() {
     HANDLE hSnapshot;
+    HANDLE hProcess;
     PROCESSENTRY32 pe32;
+    DWORD dwHandleCount = 0;
 
     hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 
@@ -29,11 +31,17 @@ int main() {
         return 1;
     }
 
-    printf("%30s %6s %6s %6s %6s\n", "Name", "PID", "PRI", "THD", "HND");
+    printf("%32s %6s %6s %6s %6s\n", "Name", "PID", "PRI", "THD", "HND");
 
     do {
-        printf("%30s %6u %6u %6u\n", removeExtension(pe32.szExeFile), pe32.th32ProcessID, pe32.pcPriClassBase,
-               pe32.cntThreads);
+        hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, pe32.th32ProcessID);
+        GetProcessHandleCount(hProcess, &dwHandleCount);
+        if (hProcess) {
+            CloseHandle(hProcess);
+        }
+
+        printf("%32s %6u %6u %6u %6u\n", removeExtension(pe32.szExeFile), pe32.th32ProcessID, pe32.pcPriClassBase,
+               pe32.cntThreads, dwHandleCount);
     } while (Process32Next(hSnapshot, &pe32));
 
     CloseHandle(hSnapshot);
