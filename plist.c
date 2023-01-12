@@ -1,16 +1,25 @@
-#include <windows.h>
-
-#include <tchar.h>
+#include <Windows.h>
 #include <tlhelp32.h>
-
-#include "plist.h"
-
-int main(void) {
-    GetProcessList();
-    return 0;
+#include <stdio.h>
+int lenght(char * string){
+    if (*string =='\0'){return 0;}
+    return lenght(&string[1])+1;
+}
+char *pseudo(char * a){
+    static int x = 0;
+    if (x >=3){
+        char * result = malloc((lenght(a)-4)*sizeof(char)+1);
+        for (int i=0;i<=lenght(a)-5;i++){
+            result[i] = a[i];
+        }
+        result[lenght(a)-4]='\0';
+        return result;
+    }
+    x++;
+    return a;
 }
 
-BOOL GetProcessList() {
+int main() {
     HANDLE hSnapshot;
     PROCESSENTRY32 pe32;
 
@@ -32,7 +41,7 @@ BOOL GetProcessList() {
     printf("                          Name    PID    PRI    THD    HND\n");
 
     do {
-        printf("%31s %6d %6d %6d\n", pe32.szExeFile,pe32.th32ProcessID,pe32.pcPriClassBase,pe32.cntThreads);
+        printf("%30s %6d %6d %6d %6d %d\n", pseudo(pe32.szExeFile),pe32.th32ProcessID,pe32.pcPriClassBase,pe32.cntThreads);
     } while (Process32Next(hSnapshot, &pe32));
 
     CloseHandle(hSnapshot);
