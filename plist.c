@@ -1,22 +1,13 @@
 #include <Windows.h>
-#include <tlhelp32.h>
 #include <stdio.h>
-int lenght(char * string){
-    if (*string =='\0'){return 0;}
-    return lenght(&string[1])+1;
-}
-char *pseudo(char * a){
-    static int x = 0;
-    if (x >=3){
-        char * result = malloc((lenght(a)-4)*sizeof(char)+1);
-        for (int i=0;i<=lenght(a)-5;i++){
-            result[i] = a[i];
-        }
-        result[lenght(a)-4]='\0';
-        return result;
+#include <tlhelp32.h>
+
+char *removeExtension(char *filename) {
+    char *ext = strrchr(filename, '.');
+    if (ext && !strcmp(ext, ".exe")) {
+        *ext = '\0';
     }
-    x++;
-    return a;
+    return filename;
 }
 
 int main() {
@@ -38,10 +29,11 @@ int main() {
         return 1;
     }
 
-    printf("                          Name    PID    PRI    THD    HND\n");
+    printf("%30s %6s %6s %6s %6s\n", "Name", "PID", "PRI", "THD", "HND");
 
     do {
-        printf("%30s %6d %6d %6d %6d %d\n", pseudo(pe32.szExeFile),pe32.th32ProcessID,pe32.pcPriClassBase,pe32.cntThreads);
+        printf("%30s %6u %6u %6u\n", removeExtension(pe32.szExeFile), pe32.th32ProcessID, pe32.pcPriClassBase,
+               pe32.cntThreads);
     } while (Process32Next(hSnapshot, &pe32));
 
     CloseHandle(hSnapshot);
