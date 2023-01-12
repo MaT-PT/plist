@@ -33,7 +33,7 @@ BOOL GetProcessList() {
     printf("---\t----\n");
 
     do {
-        printf("%s\t%d\t%d\n", pe32.szExeFile, pe32.th32ProcessID, pe32.cntThreads);
+        printf("%31s %6d %6d %6d %6d %d\n", pe32.szExeFile,pe32.th32ProcessID,pe32.pcPriClassBase,pe32.cntThreads);
     } while (Process32Next(hSnapshot, &pe32));
 
     CloseHandle(hSnapshot);
