@@ -3,9 +3,12 @@
 // #include <psapi.h>
 #include <stdio.h>
 #include <tlhelp32.h>
+#include "plist.h"
 
 int main(int argc, char *argv[]) {
-    if (GetProcessList()) {
+    // if (GetProcessList()) {
+    // if (GetThreadList(4)) {
+    if (GetThreadList(4)) {
         return 0;
     } else {
         return 1;
@@ -21,8 +24,8 @@ char *removeExtension(char *filename) {
 }
 
 BOOL GetProcessList() {
-    HANDLE hSnapshot;
-    HANDLE hProcess;
+    HANDLE hSnapshot = INVALID_HANDLE_VALUE;
+    HANDLE hProcess = INVALID_HANDLE_VALUE;
     PROCESSENTRY32 pe32;
     DWORD dwHandleCount = 0;
     LPFILETIME lpFtCreationTime = NULL;
@@ -33,7 +36,7 @@ BOOL GetProcessList() {
 
     hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 
-    if (hSnapshot == INVALID_HANDLE_VALUE) {
+    if (!hSnapshot || hSnapshot == INVALID_HANDLE_VALUE) {
         printf("CreateToolhelp32Snapshot failed. Error: %d\n", GetLastError());
         return FALSE;
     }
@@ -49,7 +52,7 @@ BOOL GetProcessList() {
     printf("%32s %6s %6s %6s %6s\n", "Name", "PID", "PRI", "THD", "HND");
 
     do {
-        hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, pe32.th32ProcessID);
+        hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pe32.th32ProcessID);
         if (!hProcess || hProcess == INVALID_HANDLE_VALUE) {
             // printf("OpenProcess failed. Error: %d\n", GetLastError());
         }
@@ -65,11 +68,67 @@ BOOL GetProcessList() {
 
         // FileTimeToSystemTime(lpFtCreationTime, lpStCreationTime);
 
-        printf("%32s %6u %6u %6u %6u %08X\n", removeExtension(pe32.szExeFile), pe32.th32ProcessID, pe32.pcPriClassBase,
+        printf("%32s %6u %6u %6u %6u %p\n", removeExtension(pe32.szExeFile), pe32.th32ProcessID, pe32.pcPriClassBase,
                pe32.cntThreads, dwHandleCount, hProcess);
         dwHandleCount = 0;
 
     } while (Process32Next(hSnapshot, &pe32));
+
+    CloseHandle(hSnapshot);
+    return TRUE;
+}
+
+BOOL GetThreadList(DWORD dwOwnerPID) {
+    HANDLE hSnapshot = INVALID_HANDLE_VALUE;
+    PROCESSENTRY32 pe32;
+    THREADENTRY32 te32;
+    BOOL bFound = FALSE;
+
+    hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD | TH32CS_SNAPPROCESS, 0);
+
+    if (!hSnapshot || hSnapshot == INVALID_HANDLE_VALUE) {
+        printf("CreateToolhelp32Snapshot failed. Error: %d\n", GetLastError());
+        return FALSE;
+    }
+
+    pe32.dwSize = sizeof(PROCESSENTRY32);
+
+    if (!Process32First(hSnapshot, &pe32)) {
+        printf("Process32First failed. Error: %d\n", GetLastError());
+        CloseHandle(hSnapshot);
+        return FALSE;
+    }
+
+    do {
+        if (pe32.th32ProcessID == dwOwnerPID) {
+            bFound = TRUE;
+            break;
+        }
+    } while (Process32Next(hSnapshot, &pe32));
+
+    if (!bFound) {
+        printf("Process with PID %u not found.\n", dwOwnerPID);
+        CloseHandle(hSnapshot);
+        return FALSE;
+    }
+
+    printf("%s %u:\n", removeExtension(pe32.szExeFile), pe32.th32ProcessID);
+
+    te32.dwSize = sizeof(THREADENTRY32);
+
+    if (!Thread32First(hSnapshot, &te32)) {
+        printf("Thread32First failed. Error: %d\n", GetLastError());
+        CloseHandle(hSnapshot);
+        return FALSE;
+    }
+
+    printf("%6s %4s\n", "TID", "PRI");
+
+    do {
+        if (te32.th32OwnerProcessID == dwOwnerPID) {
+            printf("%6u %4u\n", te32.th32ThreadID, te32.tpBasePri);
+        }
+    } while (Thread32Next(hSnapshot, &te32));
 
     CloseHandle(hSnapshot);
     return TRUE;
