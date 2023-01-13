@@ -2,4 +2,9 @@
 
 BOOL GetProcessList();
 BOOL GetThreadList(DWORD dwOwnerPID);
-char *removeExtension(char *filename);
+LPSTR removeExtension(LPSTR filename);
+
+struct Filter {
+    DWORD dwProcessId;
+    CHAR szProcessName[256];
+};
