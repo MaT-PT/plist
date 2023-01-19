@@ -1,10 +1,13 @@
 #include <windows.h>
 
-BOOL GetProcessList();
-BOOL GetThreadList(DWORD dwOwnerPID);
-LPSTR removeExtension(LPSTR filename);
-
-struct Filter {
+typedef struct Filter {
     DWORD dwProcessId;
     CHAR szProcessName[256];
-};
+} FILTER, *LPFILTER;
+
+
+BOOL GetProcessList(CONST BOOL bShowThreads, CONST LPFILTER filter);
+
+BOOL GetThreadList(CONST DWORD dwOwnerPID);
+
+LPSTR RemoveExtension(LPSTR filename);
