@@ -70,23 +70,23 @@ BOOL AddSeDebugPrivileges() {
 
     CONST HANDLE hProc = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, dwPid);
     if (!hProc) {
-        PrintError("OpenProcess()");
+        PrintError("OpenProcess");
         return FALSE;
     }
 
     HANDLE hTok = INVALID_HANDLE_VALUE;
     if (!OpenProcessToken(hProc, TOKEN_QUERY | TOKEN_ADJUST_PRIVILEGES, &hTok)) {
-        PrintError("OpenProcessToken()");
+        PrintError("OpenProcessToken");
         return FALSE;
     } else if (!hTok || hTok == INVALID_HANDLE_VALUE) {
-        PrintError("OpenProcessToken()");
+        PrintError("OpenProcessToken");
         return FALSE;
     }
 
     // Get the value of SeDebugPrivilege from text
     LUID pDebugPriv;
     if (!LookupPrivilegeValueA(NULL, "SeDebugPrivilege", &pDebugPriv)) {
-        PrintError("LookupPrivilegeValueA()");
+        PrintError("LookupPrivilegeValueA");
         return FALSE;
     }
 
@@ -96,7 +96,7 @@ BOOL AddSeDebugPrivileges() {
     tokPrivs.Privileges[0].Luid = pDebugPriv;
     tokPrivs.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
     if (!AdjustTokenPrivileges(hTok, FALSE, &tokPrivs, 0, NULL, NULL)) {
-        PrintError("AdjustTokenPrivileges()");
+        PrintError("AdjustTokenPrivileges");
         return FALSE;
     }
 
@@ -107,7 +107,7 @@ BOOL AddSeDebugPrivileges() {
     tokPrivSet.PrivilegeCount = 1;
     tokPrivSet.Privilege[0].Luid = pDebugPriv;
     if (!PrivilegeCheck(hTok, &tokPrivSet, &bRes)) {
-        PrintError("PrivilegeCheck()");
+        PrintError("PrivilegeCheck");
         return FALSE;
     }
 
