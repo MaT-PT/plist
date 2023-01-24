@@ -13,7 +13,7 @@ LPSTR RemoveExtension(CONST LPCSTR szFilename) {
     CONST LPSTR szExt = strrchr(szFilenameCopy, '.');
 
     if (szExt && !strcmp(szExt, ".exe")) {
-        *szExt = '\0';
+        szExt[0] = '\0';
     }
 
     return szFilenameCopy;
