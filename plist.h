@@ -8,8 +8,13 @@ typedef struct Filter {
     CHAR szProcessName[256];
 } FILTER, *LPFILTER;
 
-BOOL GetProcessList(CONST BOOL bShowThreads, CONST LPFILTER filter);
+typedef struct Options {
+    BOOL bShowThreads;
+    BOOL bExactMatch;
+} OPTIONS, *LPOPTIONS;
+
+VOID ShowUsage(CONST LPCSTR szAppName);
+
+BOOL GetProcessList(CONST LPOPTIONS options, CONST LPFILTER filter);
 
 BOOL GetThreadList(CONST DWORD dwOwnerPID);
-
-LPSTR RemoveExtension(LPSTR filename);

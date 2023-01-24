@@ -6,19 +6,20 @@
 
 #pragma comment(lib, "Advapi32.lib")
 
-LPSTR SIZE_UNITS[] = {"B", "kB", "MB", "GB", "TB"};
+CONST LPCSTR SIZE_UNITS[] = {"B", "kB", "MB", "GB", "TB"};
 
-LPSTR RemoveExtension(LPSTR szFilename) {
-    LPSTR szExt = strrchr(szFilename, '.');
+LPSTR RemoveExtension(CONST LPCSTR szFilename) {
+    CONST LPSTR szFilenameCopy = _strdup(szFilename);
+    CONST LPSTR szExt = strrchr(szFilenameCopy, '.');
 
     if (szExt && !strcmp(szExt, ".exe")) {
         *szExt = '\0';
     }
 
-    return szFilename;
+    return szFilenameCopy;
 }
 
-VOID GetSizeWithUnit(CONST SIZE_T sSize, LPSIZE_WITH_UNIT swuSize) {
+VOID GetSizeWithUnit(CONST SIZE_T sSize, CONST LPSIZE_WITH_UNIT swuSize) {
     SIZE_T sCurrentSize = sSize;
     CHAR cUnitIndex = 0;
 
@@ -28,15 +29,15 @@ VOID GetSizeWithUnit(CONST SIZE_T sSize, LPSIZE_WITH_UNIT swuSize) {
     }
 
     swuSize->sSize = sCurrentSize;
-    strcpy(swuSize->szUnit, SIZE_UNITS[cUnitIndex]);
+    strcpy_s(swuSize->szUnit, sizeof(swuSize->szUnit), SIZE_UNITS[cUnitIndex]);
 }
 
-VOID TimeDeltaNsToTimeSpan(CONST ULONGLONG ullTimeNs, LPTIME_SPAN lpTimeSpan) {
+VOID TimeDeltaNsToTimeSpan(CONST ULONGLONG ullTimeNs, CONST LPTIME_SPAN lpTimeSpan) {
     CONST ULONGLONG ullTimeMs = ullTimeNs / 10000;
     CONST ULONGLONG ullTimeSec = ullTimeMs / 1000;
     CONST ULONGLONG ullTimeMin = ullTimeSec / 60;
 
-    lpTimeSpan->wHours = ullTimeMin / 60;
+    lpTimeSpan->wHours = (DWORD)(ullTimeMin / 60);
     lpTimeSpan->wMinutes = ullTimeMin % 60;
     lpTimeSpan->wSeconds = ullTimeSec % 60;
     lpTimeSpan->wMilliseconds = ullTimeMs % 1000;
@@ -64,7 +65,7 @@ VOID PrintError(CONST LPCSTR lpFuncName) {
     }
 }
 
-BOOL AddSeDebugPrivileges() {
+BOOL AddSeDebugPrivileges(VOID) {
     CONST DWORD dwPid = GetCurrentProcessId();
 
     CONST HANDLE hProc = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, dwPid);

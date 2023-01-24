@@ -9,18 +9,18 @@ typedef struct SizeWithUnit {
 } SIZE_WITH_UNIT, *LPSIZE_WITH_UNIT;
 
 typedef struct TimeSpan {
-    WORD wHours;
+    DWORD wHours;
     WORD wMinutes;
     WORD wSeconds;
     WORD wMilliseconds;
 } TIME_SPAN, *LPTIME_SPAN;
 
-LPSTR RemoveExtension(LPSTR szFilename);
+LPSTR RemoveExtension(CONST LPCSTR szFilename);
 
-VOID GetSizeWithUnit(const SIZE_T sSize, LPSIZE_WITH_UNIT swuSize);
+VOID GetSizeWithUnit(CONST SIZE_T sSize, CONST LPSIZE_WITH_UNIT swuSize);
 
-VOID TimeDeltaNsToTimeSpan(CONST ULONGLONG ullTimeNs, LPTIME_SPAN lpTimeSpan);
+VOID TimeDeltaNsToTimeSpan(CONST ULONGLONG ullTimeNs, CONST LPTIME_SPAN lpTimeSpan);
 
-VOID PrintError(LPCSTR lpFuncName);
+VOID PrintError(CONST LPCSTR lpFuncName);
 
-BOOL AddSeDebugPrivileges();
+BOOL AddSeDebugPrivileges(VOID);
