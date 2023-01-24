@@ -1,1 +1,1 @@
-cl.exe /Zi /EHsc /nologo /Feplist.exe *.c
+cl.exe /O2 /Zi /Feplist.exe *.c

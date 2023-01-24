@@ -1,8 +1,7 @@
-#include <windows.h>
+#include <Windows.h>
 //
 #include <processthreadsapi.h>
 #include <stdio.h>
-#include <winbase.h>
 #include "utils.h"
 
 #pragma comment(lib, "Advapi32.lib")
@@ -44,24 +43,24 @@ VOID TimeDeltaNsToTimeSpan(CONST ULONGLONG ullTimeNs, LPTIME_SPAN lpTimeSpan) {
 }
 
 VOID PrintError(CONST LPCSTR lpFuncName) {
-    // Get the latest error id
+    // Get the latest error ID
     CONST DWORD dwErrId = GetLastError();
     printf("[ERR:%d] %s: ", dwErrId, lpFuncName);
 
     // Pring the error message based on the response
-    if (dwErrId == 0) {
-        printf("Something went wrong\n");
-    } else {
+    if (dwErrId) {
         LPSTR lpMsgBuf;
         CONST DWORD dwRes =
             FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
                            NULL, dwErrId, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&lpMsgBuf, 0, NULL);
-        if (dwRes == 0) {
-            printf("Unknown error\n");
-        } else {
+        if (dwRes) {
             printf("%s\n", lpMsgBuf);
             LocalFree(lpMsgBuf);
+        } else {
+            printf("Unknown error\n");
         }
+    } else {
+        printf("Something went wrong\n");
     }
 }
 

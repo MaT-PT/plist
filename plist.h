@@ -1,10 +1,12 @@
-#include <windows.h>
+#pragma once
+
+#include <Windows.h>
+//
 
 typedef struct Filter {
     DWORD dwProcessId;
     CHAR szProcessName[256];
 } FILTER, *LPFILTER;
-
 
 BOOL GetProcessList(CONST BOOL bShowThreads, CONST LPFILTER filter);
 

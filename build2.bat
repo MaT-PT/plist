@@ -9,7 +9,7 @@ for /f "usebackq tokens=*" %%i in (`vswhere -latest -requires Microsoft.VisualSt
 GOTO NOTFOUND
 
 :FOUND
-cl /Zi /EHsc /nologo /Feplist.exe *.c
+cl /O2 /Zi /Feplist.exe *.c
 GOTO END
 
 :NOTFOUND
