@@ -172,8 +172,8 @@ BOOL GetProcessList(IN CONST LPOPTIONS options, IN CONST LPFILTER filter) {
                     printf("%-32s %6s %9s %9s %9s %9s %9s %9s\n", "Name", "PID", "WS", "Priv", "Priv Pk", "Faults",
                            "NonP", "Page");
                 } else {
-                    printf("%-32s %6s %6s %6s %6s %9s %15s %15s  %s\n", "Name", "PID", "Pri", "Thd", "Hnd", "Priv",
-                           "CPU Time", "Elapsed Time", "Image Path");
+                    printf("%-32s %6s %6s %6s %6s %6s %9s %15s %15s  %s\n", "Name", "PID", "PPID", "Pri", "Thd", "Hnd",
+                           "Priv", "CPU Time", "Elapsed Time", "Image Path");
                 }
             }
 
@@ -246,11 +246,12 @@ BOOL GetProcessList(IN CONST LPOPTIONS options, IN CONST LPFILTER filter) {
                     TimeDeltaNsToTimeSpan(ullTickCount * 10000, &tsProcessAge);
                 }
 
-                printf("%-32s %6u %6u %6u %6u %6llu %-2s %5hu:%02hu:%02hu.%03hu %5hu:%02hu:%02hu.%03hu  %s\n",
-                       szFilenameNoExt, pe32.th32ProcessID, pe32.pcPriClassBase, pe32.cntThreads, dwHandleCount,
-                       swuPagefileUsage.sSize, swuPagefileUsage.szUnit, tsCpuTime.wHours, tsCpuTime.wMinutes,
-                       tsCpuTime.wSeconds, tsCpuTime.wMilliseconds, tsProcessAge.wHours, tsProcessAge.wMinutes,
-                       tsProcessAge.wSeconds, tsProcessAge.wMilliseconds, szProcessPath);
+                printf("%-32s %6u %6u %6u %6u %6u %6llu %-2s %5hu:%02hu:%02hu.%03hu %5hu:%02hu:%02hu.%03hu  %s\n",
+                       szFilenameNoExt, pe32.th32ProcessID, pe32.th32ParentProcessID, pe32.pcPriClassBase,
+                       pe32.cntThreads, dwHandleCount, swuPagefileUsage.sSize, swuPagefileUsage.szUnit,
+                       tsCpuTime.wHours, tsCpuTime.wMinutes, tsCpuTime.wSeconds, tsCpuTime.wMilliseconds,
+                       tsProcessAge.wHours, tsProcessAge.wMinutes, tsProcessAge.wSeconds, tsProcessAge.wMilliseconds,
+                       szProcessPath);
             }
         }
 
