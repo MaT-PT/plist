@@ -15,12 +15,12 @@ typedef struct TimeSpan {
     WORD wMilliseconds;
 } TIME_SPAN, *LPTIME_SPAN;
 
-LPSTR RemoveExtension(CONST LPCSTR szFilename);
+LPSTR RemoveExtension(IN CONST LPCSTR szFilename);
 
-VOID GetSizeWithUnit(CONST SIZE_T sSize, CONST LPSIZE_WITH_UNIT swuSize);
+VOID GetSizeWithUnit(IN CONST SIZE_T sSize, OUT CONST LPSIZE_WITH_UNIT swuSize);
 
-VOID TimeDeltaNsToTimeSpan(CONST ULONGLONG ullTimeNs, CONST LPTIME_SPAN lpTimeSpan);
+VOID TimeDeltaNsToTimeSpan(IN CONST ULONGLONG ullTimeNs, OUT CONST LPTIME_SPAN lpTimeSpan);
 
-VOID PrintError(CONST LPCSTR lpFuncName);
+VOID PrintError(IN CONST LPCSTR lpFuncName);
 
 BOOL AddSeDebugPrivileges(VOID);

@@ -1,3 +1,6 @@
+#define WIN32_LEAN_AND_MEAN 1
+#define VC_EXTRALEAN 1
+
 #include <Windows.h>
 //
 #include <processthreadsapi.h>
@@ -8,7 +11,7 @@
 
 CONST LPCSTR SIZE_UNITS[] = {"B", "kB", "MB", "GB", "TB"};
 
-LPSTR RemoveExtension(CONST LPCSTR szFilename) {
+LPSTR RemoveExtension(IN CONST LPCSTR szFilename) {
     CONST LPSTR szFilenameCopy = _strdup(szFilename);
     CONST LPSTR szExt = strrchr(szFilenameCopy, '.');
 
@@ -19,7 +22,7 @@ LPSTR RemoveExtension(CONST LPCSTR szFilename) {
     return szFilenameCopy;
 }
 
-VOID GetSizeWithUnit(CONST SIZE_T sSize, CONST LPSIZE_WITH_UNIT swuSize) {
+VOID GetSizeWithUnit(IN CONST SIZE_T sSize, OUT CONST LPSIZE_WITH_UNIT swuSize) {
     SIZE_T sCurrentSize = sSize;
     CHAR cUnitIndex = 0;
 
@@ -32,7 +35,7 @@ VOID GetSizeWithUnit(CONST SIZE_T sSize, CONST LPSIZE_WITH_UNIT swuSize) {
     strcpy_s(swuSize->szUnit, sizeof(swuSize->szUnit), SIZE_UNITS[cUnitIndex]);
 }
 
-VOID TimeDeltaNsToTimeSpan(CONST ULONGLONG ullTimeNs, CONST LPTIME_SPAN lpTimeSpan) {
+VOID TimeDeltaNsToTimeSpan(IN CONST ULONGLONG ullTimeNs, OUT CONST LPTIME_SPAN lpTimeSpan) {
     CONST ULONGLONG ullTimeMs = ullTimeNs / 10000;
     CONST ULONGLONG ullTimeSec = ullTimeMs / 1000;
     CONST ULONGLONG ullTimeMin = ullTimeSec / 60;
@@ -43,7 +46,7 @@ VOID TimeDeltaNsToTimeSpan(CONST ULONGLONG ullTimeNs, CONST LPTIME_SPAN lpTimeSp
     lpTimeSpan->wMilliseconds = ullTimeMs % 1000;
 }
 
-VOID PrintError(CONST LPCSTR lpFuncName) {
+VOID PrintError(IN CONST LPCSTR lpFuncName) {
     // Get the latest error ID
     CONST DWORD dwErrId = GetLastError();
     printf("[ERR:%d] %s: ", dwErrId, lpFuncName);
