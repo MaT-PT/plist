@@ -14,7 +14,7 @@
 #include "utils.h"
 
 int main(IN CONST DWORD argc, IN CONST LPCSTR argv[]) {
-    if (!AddSeDebugPrivileges()) {
+    if (!GrantSeDebugPrivilege()) {
         printf("Warning: Please run as administrator to get all infos.\n\n");
         // return 1;
     }

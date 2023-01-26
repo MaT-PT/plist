@@ -23,4 +23,4 @@ VOID TimeDeltaNsToTimeSpan(IN CONST ULONGLONG ullTimeNs, OUT CONST LPTIME_SPAN l
 
 VOID PrintError(IN CONST LPCSTR lpFuncName);
 
-BOOL AddSeDebugPrivileges(VOID);
+BOOL GrantSeDebugPrivilege(VOID);

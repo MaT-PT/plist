@@ -68,28 +68,21 @@ VOID PrintError(IN CONST LPCSTR lpFuncName) {
     }
 }
 
-BOOL AddSeDebugPrivileges(VOID) {
-    CONST DWORD dwPid = GetCurrentProcessId();
-
-    CONST HANDLE hProc = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, dwPid);
-    if (!hProc) {
-        PrintError("OpenProcess");
-        return FALSE;
-    }
+BOOL GrantSeDebugPrivilege(VOID) {
+    CONST HANDLE hProc = GetCurrentProcess();
 
     HANDLE hTok = INVALID_HANDLE_VALUE;
-    if (!OpenProcessToken(hProc, TOKEN_QUERY | TOKEN_ADJUST_PRIVILEGES, &hTok)) {
-        PrintError("OpenProcessToken");
-        return FALSE;
-    } else if (!hTok || hTok == INVALID_HANDLE_VALUE) {
+    if (!OpenProcessToken(hProc, TOKEN_QUERY | TOKEN_ADJUST_PRIVILEGES, &hTok) || !hTok ||
+        hTok == INVALID_HANDLE_VALUE) {
         PrintError("OpenProcessToken");
         return FALSE;
     }
 
-    // Get the value of SeDebugPrivilege from text
+    // Get the value of SeDebugPrivilege from its name
     LUID pDebugPriv;
     if (!LookupPrivilegeValueA(NULL, "SeDebugPrivilege", &pDebugPriv)) {
         PrintError("LookupPrivilegeValueA");
+        CloseHandle(hTok);
         return FALSE;
     }
 
@@ -98,25 +91,13 @@ BOOL AddSeDebugPrivileges(VOID) {
     tokPrivs.PrivilegeCount = 1;
     tokPrivs.Privileges[0].Luid = pDebugPriv;
     tokPrivs.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-    if (!AdjustTokenPrivileges(hTok, FALSE, &tokPrivs, 0, NULL, NULL)) {
+    if (!AdjustTokenPrivileges(hTok, FALSE, &tokPrivs, 0, NULL, NULL) || GetLastError() != ERROR_SUCCESS) {
         PrintError("AdjustTokenPrivileges");
+        CloseHandle(hTok);
         return FALSE;
     }
 
-    // Query token privileges to confirm whether
-    BOOL bRes;
-    PRIVILEGE_SET tokPrivSet;
-    tokPrivSet.Control = PRIVILEGE_SET_ALL_NECESSARY;
-    tokPrivSet.PrivilegeCount = 1;
-    tokPrivSet.Privilege[0].Luid = pDebugPriv;
-    if (!PrivilegeCheck(hTok, &tokPrivSet, &bRes)) {
-        PrintError("PrivilegeCheck");
-        return FALSE;
-    }
-
-    CloseHandle(hProc);
     CloseHandle(hTok);
-    hTok = NULL;
 
-    return bRes;
+    return TRUE;
 }
