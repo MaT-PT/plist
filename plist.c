@@ -14,11 +14,6 @@
 #include "utils.h"
 
 int main(IN CONST DWORD argc, IN CONST LPCSTR argv[]) {
-    if (!GrantSeDebugPrivilege()) {
-        printf("Warning: Please run as administrator to get all infos.\n\n");
-        // return 1;
-    }
-
     OPTIONS options;
     FILTER filter;
     LPCSTR lpEnd;
@@ -68,6 +63,11 @@ int main(IN CONST DWORD argc, IN CONST LPCSTR argv[]) {
         }
     }
 
+    if (!GrantSeDebugPrivilege()) {
+        printf("Warning: Please run as administrator to get all infos.\n\n");
+        // return 1;
+    }
+
     if (GetProcessList(&options, &filter)) {
         return 0;
     } else {
@@ -82,6 +82,7 @@ VOID ShowUsage(IN CONST LPCSTR szAppName) {
     printf("    -e          Match process name exactly.\n");
     printf("    name        Show information about processes that begin with the name specified.\n");
     printf("    PID         Show information about specified process.\n");
+    printf("    -h          Show this help message and exit.\n");
 }
 
 BOOL CheckFilter(IN CONST LPFILTER filter, IN CONST BOOL bExactMatch, IN CONST LPCSTR szProcessName,
