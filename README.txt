@@ -21,7 +21,7 @@ cl.exe /O2 /Zi /W4 /Feplist.exe *.c
 == Utilisation ==
 
 ------------------------------------------------------------------------------------
-/!\ Attention /!\
+/!\ ATTENTION /!\
 Il faut lancer plist.exe en tant qu’administrateur (terminal avec privilèges élevés)
 pour pouvoir afficher les informations sur les processus du système.
 Dans le cas contraire, le programme fonctionnera mais il manquera certaines données.

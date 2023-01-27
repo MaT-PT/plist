@@ -22,4 +22,4 @@ BOOL CheckFilter(IN CONST LPFILTER filter, IN CONST BOOL bExactMatch, IN CONST L
 
 BOOL GetProcessList(IN CONST LPOPTIONS options, IN CONST LPFILTER filter);
 
-BOOL GetThreadList(IN CONST DWORD dwOwnerPID);
+BOOL GetThreadList(IN CONST DWORD dwOwnerPID, IN CONST PULARGE_INTEGER uliCurrentTime);

@@ -100,10 +100,12 @@ VOID ShowUsage(IN CONST LPCSTR szAppName) {
 
 BOOL CheckFilter(IN CONST LPFILTER filter, IN CONST BOOL bExactMatch, IN CONST LPCSTR szProcessName,
                  IN CONST DWORD dwProcessId) {
+    // Check if PID matches filter
     if (filter->dwProcessId != MAXDWORD && dwProcessId != filter->dwProcessId) {
         return FALSE;
     }
 
+    // Check if process name matches filter
     if (filter->szProcessName[0] != '\0') {
         if (bExactMatch) {
             if (_stricmp(szProcessName, filter->szProcessName)) {
@@ -179,7 +181,7 @@ BOOL GetProcessList(IN CONST LPOPTIONS options, IN CONST LPFILTER filter) {
             }
             printf("%s %u:\n", szFilenameNoExt, pe32.th32ProcessID);
 
-            GetThreadList(pe32.th32ProcessID);
+            GetThreadList(pe32.th32ProcessID, &uliCurrentTime);
         } else {
             if (bFirst) {
                 if (options->bShowMemory) {
@@ -279,6 +281,7 @@ BOOL GetProcessList(IN CONST LPOPTIONS options, IN CONST LPFILTER filter) {
 
     CloseHandle(hSnapshot);
 
+    // If bFirst is still TRUE, no processes were found
     if (bFirst) {
         if (filter->dwProcessId != MAXDWORD) {
             printf("Process with PID %u was not found.\n", filter->dwProcessId);
@@ -293,13 +296,13 @@ BOOL GetProcessList(IN CONST LPOPTIONS options, IN CONST LPFILTER filter) {
     return TRUE;
 }
 
-BOOL GetThreadList(IN CONST DWORD dwOwnerPID) {
+BOOL GetThreadList(IN CONST DWORD dwOwnerPID, IN CONST PULARGE_INTEGER uliCurrentTime) {
     HANDLE hThreadSnapshot = INVALID_HANDLE_VALUE;
     HANDLE hThread = INVALID_HANDLE_VALUE;
     THREADENTRY32 te32;
 
-    FILETIME ftCreationTime, ftExitTime, ftKernelTime, ftUserTime, ftCurrentTime;
-    ULARGE_INTEGER uliCreationTime, uliKernelTime, uliUserTime, uliCurrentTime;
+    FILETIME ftCreationTime, ftExitTime, ftKernelTime, ftUserTime;
+    ULARGE_INTEGER uliCreationTime, uliKernelTime, uliUserTime;
     TIME_SPAN tsThreadAge, tsKernelTime, tsUserTime;
 
     hThreadSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, 0);
@@ -316,10 +319,6 @@ BOOL GetThreadList(IN CONST DWORD dwOwnerPID) {
         CloseHandle(hThreadSnapshot);
         return FALSE;
     }
-
-    GetSystemTimeAsFileTime(&ftCurrentTime);
-    uliCurrentTime.LowPart = ftCurrentTime.dwLowDateTime;
-    uliCurrentTime.HighPart = ftCurrentTime.dwHighDateTime;
 
     printf("%5s %3s %15s %15s %15s\n", "TID", "Pri", "User Time", "Kernel Time", "Elapsed Time");
 
@@ -343,7 +342,7 @@ BOOL GetThreadList(IN CONST DWORD dwOwnerPID) {
                     uliUserTime.HighPart = ftUserTime.dwHighDateTime;
 
                     // Time since thread creation
-                    TimeDeltaNsToTimeSpan(uliCurrentTime.QuadPart - uliCreationTime.QuadPart, &tsThreadAge);
+                    TimeDeltaNsToTimeSpan(uliCurrentTime->QuadPart - uliCreationTime.QuadPart, &tsThreadAge);
 
                     TimeDeltaNsToTimeSpan(uliKernelTime.QuadPart, &tsKernelTime);
                     TimeDeltaNsToTimeSpan(uliUserTime.QuadPart, &tsUserTime);
