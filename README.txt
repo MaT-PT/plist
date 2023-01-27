@@ -18,6 +18,9 @@ la commande suivante depuis un terminal de développement de Visual Studio :
 cl.exe /O2 /Zi /W4 /Feplist.exe *.c
 
 
+Le script clean.bat permet de nettoyer les fichiers intermédiaires de compilation.
+
+
 == Utilisation ==
 
 ------------------------------------------------------------------------------------

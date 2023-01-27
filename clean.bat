@@ -1,1 +1,1 @@
-del *.obj *.pdb *.ilk *.exe
+del /Q *.obj *.pdb *.ilk
