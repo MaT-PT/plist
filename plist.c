@@ -83,6 +83,19 @@ VOID ShowUsage(IN CONST LPCSTR szAppName) {
     printf("    name        Show information about processes that begin with the name specified.\n");
     printf("    PID         Show information about specified process.\n");
     printf("    -h          Show this help message and exit.\n");
+    printf("\n");
+    printf("Abbreviations:\n");
+    printf("    PID         Process ID\n");
+    printf("    PPID        Parent Process ID\n");
+    printf("    Pri         Priority\n");
+    printf("    Thd         Number of Threads\n");
+    printf("    Hnd         Number of Handles\n");
+    printf("    WS          Working Set\n");
+    printf("    Priv        Private Virtual Memory\n");
+    printf("    Priv Pk     Private Virtual Memory Peak\n");
+    printf("    Faults      Page Faults\n");
+    printf("    NonP        Non-Paged Pool\n");
+    printf("    Page        Paged Pool\n");
 }
 
 BOOL CheckFilter(IN CONST LPFILTER filter, IN CONST BOOL bExactMatch, IN CONST LPCSTR szProcessName,
