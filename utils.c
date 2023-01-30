@@ -10,6 +10,7 @@
 #pragma comment(lib, "Advapi32.lib")
 
 CONST LPCSTR SIZE_UNITS[] = {"B", "kB", "MB", "GB", "TB"};
+CONST DWORD SIZE_UNITS_COUNT = sizeof(SIZE_UNITS) / sizeof(SIZE_UNITS[0]);
 
 LPSTR RemoveExtension(IN CONST LPCSTR szFilename) {
     CONST LPSTR szFilenameCopy = _strdup(szFilename);
@@ -24,9 +25,9 @@ LPSTR RemoveExtension(IN CONST LPCSTR szFilename) {
 
 VOID GetSizeWithUnit(IN CONST SIZE_T sSize, OUT CONST LPSIZE_WITH_UNIT swuSize) {
     SIZE_T sCurrentSize = sSize;
-    CHAR cUnitIndex = 0;
+    WORD cUnitIndex = 0;
 
-    while (sCurrentSize > 1024) {
+    while (sCurrentSize > 1024 && cUnitIndex < SIZE_UNITS_COUNT - 1) {
         sCurrentSize /= 1024;
         cUnitIndex++;
     }

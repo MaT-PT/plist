@@ -38,6 +38,19 @@ Usage: plist.exe [-h] [-d] [-m] [-e] [name|PID]
     PID         Show information about specified process.
     -h          Show this help message and exit.
 
+Abbreviations:
+    PID         Process ID
+    PPID        Parent Process ID
+    Pri         Priority
+    Thd         Number of Threads
+    Hnd         Number of Handles
+    WS          Working Set
+    Priv        Private Virtual Memory
+    Priv Pk     Private Virtual Memory Peak
+    Faults      Page Faults
+    NonP        Non-Paged Pool
+    Page        Paged Pool
+
 
 Exemples d’utilisation :
   plist.exe
